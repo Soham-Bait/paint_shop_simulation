@@ -15,7 +15,7 @@ def run_simulation():
 
     env.process(car_generator(env, stations, metrics))
 
-    # Run only for shift duration
+    # Run simulation for the shift duration (480 minutes)
     env.run(until=config.SIMULATION_TIME)
 
     print("\n=== Paint Shop Simulation Results (480 minutes) ===")
@@ -26,9 +26,18 @@ def run_simulation():
         else 0
     )
 
-    clean_util = (metrics.clean_busy / config.SIMULATION_TIME) * 100
-    primer_util = (metrics.primer_busy / (config.SIMULATION_TIME * config.PRIMER_CAPACITY)) * 100
-    paint_util = (metrics.paint_busy / config.SIMULATION_TIME) * 100
+    # Utilization = total busy time / (simulation time × number of machines)
+    clean_util = (
+        metrics.clean_busy / (config.SIMULATION_TIME * config.CLEAN_CAPACITY)
+    ) * 100
+
+    primer_util = (
+        metrics.primer_busy / (config.SIMULATION_TIME * config.PRIMER_CAPACITY)
+    ) * 100
+
+    paint_util = (
+        metrics.paint_busy / (config.SIMULATION_TIME * config.PAINT_CAPACITY)
+    ) * 100
 
     avg_clean_wait = (
         sum(metrics.clean_wait) / len(metrics.clean_wait)
